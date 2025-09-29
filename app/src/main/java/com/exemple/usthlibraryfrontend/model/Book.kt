@@ -1,0 +1,37 @@
+package com.exemple.usthlibraryfrontend.model
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import com.exemple.usthlibraryfrontend.R
+import com.exemple.usthlibraryfrontend.screen.BookScreen
+import java.time.LocalDate
+
+data class Book(
+    val id: Int,
+    val title: String,
+    // phai sua lai thanh Author
+    val author: String,
+    val isbn: String,
+    val publishedDate: LocalDate,
+    val coverImageRes: Int,
+    val category: String,
+    // phải sửa type thành Review
+    val reviews: String? = null,
+    val isLoan: Boolean = false
+)
+
+@RequiresApi(Build.VERSION_CODES.O)
+val books = mutableStateListOf<Book>(
+    Book(1, "gddsa", "qf", "qwd",LocalDate.of(2000, 5, 12), R.drawable.img1, "dáq", "fewff", true),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img2, "dáq", "fewff", true),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img3, "dáq", "fewff", false),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img4, "dáq", "fewff", false),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img5, "dáq", "fewff", true),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img6, "dáq", "fewff", false),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img3, "dáq", "fewff", true),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img1, "dáq", "fewff", false),
+    Book(1, "gddsa", "qf","qwd", LocalDate.of(2000, 5, 12), R.drawable.img5, "dáq", "fewff", true),
+    Book(1, "gddsa", "qf", "qwd",LocalDate.of(2000, 5, 12), R.drawable.img2, "dáq", "fewff", true)
+)

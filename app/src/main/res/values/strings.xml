@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">usthlibraryfrontend</string>
+    <string name="home">Home</string>
+    <string name="user">User</string>
+    <string name="book">Book</string>
+    <string name="author">Author</string>
+    <string name="loan">Loan</string>
+    <string name="review">Review</string>
+    <string name="justArrived">Just Arrived</string>
+    <string name="popular">Popular</string>
+    <string name="topBorrowedBooks">Top Borrowed Books</string>
+    <string name="recommend">Recommend</string>
+    <string name="searchForBooks">Search for books</string>
+    <string name="active">Active</string>
+    <string name="loaned">Loaned</string>
+</resources>
