@@ -6,7 +6,7 @@ enum class Role() {
 }
 
 data class User(
-    val id: Int,
+    val id: String,
     val username: String,
     val password: String,
     val email: String,
@@ -15,11 +15,11 @@ data class User(
 )
 
 val users = listOf<User>(
-    User(1, "sd", "asd", "asd", Role.MEMBER, 1),
-    User(2, "sd", "asd", "asd", Role.ADMIN, 1),
-    User(3, "sd", "asd", "asd", Role.MEMBER, 1),
-    User(4, "sd", "asd", "asd", Role.ADMIN, 1),
-    User(5, "sd", "asd", "asd", Role.ADMIN, 1),
-    User(6, "sd", "asd", "asd", Role.ADMIN, 1),
-    User(7, "sd", "asd", "asd", Role.MEMBER, 1)
+    User("a", "sd", "asd", "asd", Role.MEMBER, 1),
+    User("b", "sd", "asd", "asd", Role.ADMIN, 1),
+    User("c", "sd", "asd", "asd", Role.MEMBER, 1),
+    User("d", "sd", "asd", "asd", Role.ADMIN, 1),
+    User("e", "sd", "asd", "asd", Role.ADMIN, 1),
+    User("f", "sd", "asd", "asd", Role.ADMIN, 1),
+    User("g", "sd", "asd", "asd", Role.MEMBER, 1)
 )

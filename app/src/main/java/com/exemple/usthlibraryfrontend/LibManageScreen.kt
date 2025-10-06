@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,12 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.exemple.usthlibraryfrontend.model.Author
 import com.exemple.usthlibraryfrontend.screen.AuthorScreen
 import com.exemple.usthlibraryfrontend.screen.BookManager
-import com.exemple.usthlibraryfrontend.screen.BookScreen
 import com.exemple.usthlibraryfrontend.screen.HomeScreen
 import com.exemple.usthlibraryfrontend.screen.LoanScreen
+import com.exemple.usthlibraryfrontend.screen.LoginScreen
+import com.exemple.usthlibraryfrontend.screen.RegisterScreen
 import com.exemple.usthlibraryfrontend.screen.ReviewScreen
 import com.exemple.usthlibraryfrontend.screen.UserScreen
 
@@ -42,15 +41,20 @@ enum class LibManageScreen(val title: Int) {
     Review(title = R.string.review)
 }
 
+sealed class AuthScreen {
+    object Login : AuthScreen()
+    object Register : AuthScreen()
+}
+
 @Composable
 fun LibManageBottomBar(onScreenSelected: (LibManageScreen) -> Unit = {}, modifier: Modifier = Modifier) {
     BottomAppBar {
-        LibManageScreen.values().forEach {
-            screen -> IconButton(
-                onClick = {onScreenSelected(screen)},
+        LibManageScreen.values().forEach { screen ->
+            IconButton(
+                onClick = { onScreenSelected(screen) },
                 modifier = Modifier.weight(1f)
             ) {
-                val iconRes = when(screen) {
+                val iconRes = when (screen) {
                     LibManageScreen.Home -> R.drawable.home_24dp_e3e3e3_fill0_wght400_grad0_opsz24
                     LibManageScreen.User -> R.drawable.user_attributes_24dp_e3e3e3_fill0_wght400_grad0_opsz24
                     LibManageScreen.Book -> R.drawable.shelves_24dp_e3e3e3_fill0_wght400_grad0_opsz24
@@ -80,22 +84,43 @@ fun LibManageBottomBar(onScreenSelected: (LibManageScreen) -> Unit = {}, modifie
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LibManageScreen() {
+    var isLoggedIn by remember { mutableStateOf(false) }
+    var currentAuthScreen by remember { mutableStateOf<AuthScreen>(AuthScreen.Login) }
     var currentScreen by rememberSaveable { mutableStateOf(LibManageScreen.Home) }
 
-    Scaffold(
-        bottomBar = {
-            LibManageBottomBar( {
-                selected -> currentScreen = selected
-            })
+    if (isLoggedIn) {
+        Scaffold(
+            bottomBar = {
+                LibManageBottomBar(onScreenSelected = { selected ->
+                    currentScreen = selected
+                })
+            }
+        ) { padding ->
+            when (currentScreen) {
+                LibManageScreen.Home -> HomeScreen(Modifier.padding(padding))
+                LibManageScreen.User -> UserScreen(
+                    modifier = Modifier.padding(padding),
+                    onLogout = {
+                        isLoggedIn = false
+                        currentScreen = LibManageScreen.Home
+                    }
+                )
+                LibManageScreen.Book -> BookManager(Modifier.padding(padding))
+                LibManageScreen.Author -> AuthorScreen(Modifier.padding(padding))
+                LibManageScreen.Loan -> LoanScreen(Modifier.padding(padding))
+                LibManageScreen.Review -> ReviewScreen(Modifier.padding(padding))
+            }
         }
-    ) { padding ->
-        when (currentScreen) {
-            LibManageScreen.Home -> HomeScreen(Modifier.padding(padding))
-            LibManageScreen.User -> UserScreen(Modifier.padding(padding))
-            LibManageScreen.Book -> BookManager(Modifier.padding(padding))
-            LibManageScreen.Author -> AuthorScreen()
-            LibManageScreen.Loan -> LoanScreen()
-            LibManageScreen.Review -> ReviewScreen()
+    } else {
+        when (currentAuthScreen) {
+            is AuthScreen.Login -> LoginScreen(
+                onLoginSuccess = { isLoggedIn = true },
+                onNavigateToRegister = { currentAuthScreen = AuthScreen.Register }
+            )
+            is AuthScreen.Register -> RegisterScreen(
+                onRegisterSuccess = { currentAuthScreen = AuthScreen.Login },
+                onNavigateToLogin = { currentAuthScreen = AuthScreen.Login }
+            )
         }
     }
 }
