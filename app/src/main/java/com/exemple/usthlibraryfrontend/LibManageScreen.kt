@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.exemple.usthlibraryfrontend.screen.AuthorScreen
 import com.exemple.usthlibraryfrontend.screen.book.BookManager
 import com.exemple.usthlibraryfrontend.screen.HomeScreen
+import com.exemple.usthlibraryfrontend.screen.ReviewManagerScreen
 import com.exemple.usthlibraryfrontend.screen.loan.LoanScreen
-import com.exemple.usthlibraryfrontend.screen.ReviewScreen
 import com.exemple.usthlibraryfrontend.screen.UserScreen
 
 enum class LibManageScreen(val title: Int) {
@@ -91,7 +91,7 @@ fun LibManageScreen() {
             LibManageScreen.Book -> BookManager(Modifier.padding(padding))
             LibManageScreen.Author -> AuthorScreen()
             LibManageScreen.Loan -> LoanScreen()
-            LibManageScreen.Review -> ReviewScreen()
+            LibManageScreen.Review -> ReviewManagerScreen()
         }
     }
 }
