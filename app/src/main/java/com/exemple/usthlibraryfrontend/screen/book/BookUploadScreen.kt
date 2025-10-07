@@ -1,4 +1,4 @@
-package com.exemple.usthlibraryfrontend.screen
+package com.exemple.usthlibraryfrontend.screen.book
 
 import android.os.Build
 import androidx.annotation.RequiresApi

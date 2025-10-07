@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,12 +22,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.exemple.usthlibraryfrontend.model.Author
 import com.exemple.usthlibraryfrontend.screen.AuthorScreen
-import com.exemple.usthlibraryfrontend.screen.BookManager
-import com.exemple.usthlibraryfrontend.screen.BookScreen
+import com.exemple.usthlibraryfrontend.screen.book.BookManager
 import com.exemple.usthlibraryfrontend.screen.HomeScreen
-import com.exemple.usthlibraryfrontend.screen.LoanScreen
+import com.exemple.usthlibraryfrontend.screen.loan.LoanScreen
 import com.exemple.usthlibraryfrontend.screen.ReviewScreen
 import com.exemple.usthlibraryfrontend.screen.UserScreen
 

@@ -3,9 +3,7 @@ package com.exemple.usthlibraryfrontend.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import com.exemple.usthlibraryfrontend.R
-import com.exemple.usthlibraryfrontend.screen.BookScreen
 import java.time.LocalDate
 
 data class Book(
