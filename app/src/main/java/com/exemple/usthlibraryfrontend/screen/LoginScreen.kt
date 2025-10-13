@@ -24,10 +24,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val coroutineScope = rememberCoroutineScope()
-    val userService = remember { UserService() }
     val context = LocalContext.current
+    val userService = remember { UserService(context) }
     val sessionManager = remember { SessionManager(context) }
-
     Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,

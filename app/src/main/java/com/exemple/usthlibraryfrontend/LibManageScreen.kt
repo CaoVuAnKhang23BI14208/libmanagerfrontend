@@ -19,10 +19,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.exemple.usthlibraryfrontend.data.SessionManager
 import com.exemple.usthlibraryfrontend.screen.AuthorScreen
 import com.exemple.usthlibraryfrontend.screen.BookManager
 import com.exemple.usthlibraryfrontend.screen.HomeScreen
@@ -84,9 +86,22 @@ fun LibManageBottomBar(onScreenSelected: (LibManageScreen) -> Unit = {}, modifie
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LibManageScreen() {
-    var isLoggedIn by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val sessionManager = remember  { SessionManager(context) }
+
+    var isLoggedIn by remember { mutableStateOf(sessionManager.fetchAuthToken() != null) }
     var currentAuthScreen by remember { mutableStateOf<AuthScreen>(AuthScreen.Login) }
-    var currentScreen by rememberSaveable { mutableStateOf(LibManageScreen.Home) }
+
+    // Đặt UserScreen làm màn hình mặc định sau khi đăng nhập
+    var currentScreen by remember { mutableStateOf(LibManageScreen.User) }
+
+    // Hàm xử lý đăng xuất (khi người dùng tự nhấn hoặc bị buộc)
+    val handleLogout = {
+        sessionManager.clearSession()
+        isLoggedIn = false
+        // Reset về màn hình login cho lần sau
+        currentAuthScreen = AuthScreen.Login
+    }
 
     if (isLoggedIn) {
         Scaffold(
@@ -100,10 +115,7 @@ fun LibManageScreen() {
                 LibManageScreen.Home -> HomeScreen(Modifier.padding(padding))
                 LibManageScreen.User -> UserScreen(
                     modifier = Modifier.padding(padding),
-                    onLogout = {
-                        isLoggedIn = false
-                        currentScreen = LibManageScreen.Home
-                    }
+                    onForceLogout = handleLogout // Truyền hàm đăng xuất
                 )
                 LibManageScreen.Book -> BookManager(Modifier.padding(padding))
                 LibManageScreen.Author -> AuthorScreen(Modifier.padding(padding))
