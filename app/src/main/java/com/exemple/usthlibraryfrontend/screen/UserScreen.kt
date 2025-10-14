@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,19 +40,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.exemple.usthlibraryfrontend.R
 import com.exemple.usthlibraryfrontend.model.Role
 import com.exemple.usthlibraryfrontend.model.User
 import com.exemple.usthlibraryfrontend.model.books
 import com.exemple.usthlibraryfrontend.model.users
+import com.exemple.usthlibraryfrontend.viewmodel.UserViewModel
 
 @Preview
 @Composable
-fun UserScreen(modifier: Modifier = Modifier) {
+fun UserScreen(
+    userViewModel: UserViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
+    val userUiState by userViewModel.uiState.collectAsState()
+
     val avatarSize = 100.dp
     val filter = listOf(Role.MEMBER, Role.ADMIN)
-    var search by rememberSaveable { mutableStateOf("") }
-    var selectedFilter by rememberSaveable { mutableStateOf<Role?>(null) }
 
     Column(modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -98,21 +104,17 @@ fun UserScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        dropDownMenu(filter, onFilterSelected = { selectedFilter = it })
+        dropDownMenu(filter, { userViewModel.updateFilter(it) })
 
         OutlinedTextField(
-            value = search,
-            onValueChange = {search = it},
+            value = userUiState.search,
+            onValueChange = {userViewModel.updateSearch(it)},
             label = { Text("Search")},
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )
 
-        val filteredUser = users.filter { it ->
-            (selectedFilter == null || it.role == selectedFilter) &&
-                    (search.isEmpty() || it.id.equals(search.toInt()))
-        }
-        userList(filteredUser)
+        userList(userViewModel.filteredUser())
     }
 }
 

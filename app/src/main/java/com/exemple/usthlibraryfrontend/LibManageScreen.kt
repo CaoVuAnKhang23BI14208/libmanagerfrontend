@@ -87,11 +87,11 @@ fun LibManageScreen() {
     ) { padding ->
         when (currentScreen) {
             LibManageScreen.Home -> HomeScreen(Modifier.padding(padding))
-            LibManageScreen.User -> UserScreen(Modifier.padding(padding))
+            LibManageScreen.User -> UserScreen(modifier = Modifier.padding(padding))
             LibManageScreen.Book -> BookManager(Modifier.padding(padding))
             LibManageScreen.Author -> AuthorScreen()
-            LibManageScreen.Loan -> LoanScreen()
-            LibManageScreen.Review -> ReviewManagerScreen()
+            LibManageScreen.Loan -> LoanScreen(modifier = Modifier.padding(padding))
+            LibManageScreen.Review -> ReviewManagerScreen(modifier = Modifier.padding(padding))
         }
     }
 }

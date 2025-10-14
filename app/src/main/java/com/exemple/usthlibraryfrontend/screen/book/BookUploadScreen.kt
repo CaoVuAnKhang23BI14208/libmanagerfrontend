@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,79 +21,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.exemple.usthlibraryfrontend.R
 import com.exemple.usthlibraryfrontend.model.Book
 import com.exemple.usthlibraryfrontend.model.books
+import com.exemple.usthlibraryfrontend.viewmodel.BookViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview
 @Composable
-fun BookUpload(onUpload: (Book) -> Unit = {}, onCancel: () -> Unit = {}, modifier: Modifier = Modifier) {
-    var id by rememberSaveable { mutableStateOf("") }
-    var title by rememberSaveable { mutableStateOf("") }
-    var author by rememberSaveable { mutableStateOf("") }
-    var publishedDate by rememberSaveable { mutableStateOf("") }
-    var isbn by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("") }
+fun BookUpload(bookViewModel: BookViewModel, modifier: Modifier = Modifier) {
+    val bookUiState by bookViewModel.uiState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column {
             Text(
                 text = "Book details"
             )
-            
-            rowDetails(
-                text = "ID:",
-                value = id,
-                onValueChange = { id = it }
-            )
-
             rowDetails(
                 text = "Title:",
-                value = title,
-                onValueChange = { title = it }
+                value = bookUiState.title,
+                onValueChange = { bookViewModel.updateField("title", it)}
             )
 
             rowDetails(
                 text = "Author:",
-                value = author,
-                onValueChange = { author = it}
+                value = bookUiState.author,
+                onValueChange = { bookViewModel.updateField("author", it)}
             )
 
             rowDetails(
                 text = "Published Date:",
-                value = publishedDate,
-                onValueChange = { publishedDate = it }
+                value = bookUiState.publishedDate,
+                onValueChange = { bookViewModel.updateField("publishedDate", it) }
             )
 
             rowDetails(
                 text = "ISBN:",
-                value = isbn,
-                onValueChange = { isbn = it }
+                value = bookUiState.isbn,
+                onValueChange = { bookViewModel.updateField("isbn", it) }
             )
 
             rowDetails(
                 text = "Category:",
-                value = category,
-                onValueChange = { category = it }
+                value = bookUiState.category,
+                onValueChange = { bookViewModel.updateField("category", it) }
             )
 
             Row {
                 Button(onClick = {
-                    val newBook = Book(
-                        id = id.toInt(),
-                        title = title,
-                        author = author,
-                        publishedDate = LocalDate.parse(publishedDate),
-                        isbn = isbn,
-                        category = category,
-                        coverImageRes = R.drawable.img1
-                    )
-                    books.add(newBook)
-                    onUpload(newBook)
+                    bookViewModel.addBook()
                 }) {
                     Text("Save")
                 }
 
-                Button(onClick = { onCancel() }) {
+                Button(onClick = {
+                    bookViewModel.cancelAdd()
+                }) {
                     Text("Cancel")
                 }
             }

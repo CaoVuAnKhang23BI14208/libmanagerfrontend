@@ -21,6 +21,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,28 +32,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.exemple.usthlibraryfrontend.model.Loan
 import com.exemple.usthlibraryfrontend.model.loans
+import com.exemple.usthlibraryfrontend.viewmodel.LoanViewModel
 import kotlin.math.exp
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun ActiveLoansList(modifier: Modifier = Modifier) {
-    var search by rememberSaveable { mutableStateOf("") }
-    var selectedFilter by rememberSaveable { mutableStateOf<String?>(null) }
+fun ActiveLoansList(
+    modifier: Modifier = Modifier,
+    loanViewModel: LoanViewModel = viewModel()
+) {
+    val loanUiState by loanViewModel.uiState.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        dropDownMenu(onFilterSelected = {selectedFilter = it})
+        dropDownMenu(onFilterSelected = {loanViewModel.updateFilter(it)})
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = search,
-            onValueChange = {search = it},
+            value = loanUiState.search,
+            onValueChange = {loanViewModel.updateSearch(it)},
             label = {Text("Search")},
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -60,23 +65,7 @@ fun ActiveLoansList(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        val filteredLoan = loans.filter { it ->
-            (when(selectedFilter) {
-                "All" -> true
-                "Active" -> !it.isExpired
-                "Expired" -> it.isExpired
-                else -> true
-            })
-                    && (search.isEmpty() ||
-                            it.id.toString() == search ||
-                            it.bookTitle.contains(search, ignoreCase = true) ||
-                            it.userId.toString() == search ||
-                            it.loanDate.toString().contains(search) ||
-                            it.returnDate.toString().contains(search)
-                            )
-        }
-
-        loanList(filteredLoan)
+        loanList(loanViewModel.filteredLoans())
     }
 }
 

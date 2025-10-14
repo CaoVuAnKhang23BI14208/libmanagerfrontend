@@ -19,6 +19,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,36 +31,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.exemple.usthlibraryfrontend.R
 import com.exemple.usthlibraryfrontend.model.Book
 import com.exemple.usthlibraryfrontend.model.books
+import com.exemple.usthlibraryfrontend.viewmodel.BookViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview
-fun BookManager(modifier: Modifier = Modifier) {
-    var currentScreen by rememberSaveable { mutableStateOf("list") }
+fun BookManager(
+    modifier: Modifier = Modifier,
+    bookViewModel: BookViewModel = viewModel()
+) {
+    val bookUiState by bookViewModel.uiState.collectAsState()
 
-    when (currentScreen) {
-        "list" -> BookScreen(
-            onUploadClick = { currentScreen = "add"},
-            modifier = modifier
-        )
-
-        "add" -> BookUpload(
-            onUpload = {
-                currentScreen = "list"
-            },
-            onCancel = { currentScreen = "list" },
-            modifier = modifier
-        )
+    when (bookUiState.currentScreen) {
+        "list" -> BookScreen(bookViewModel = bookViewModel)
+        "add" -> BookUpload(bookViewModel)
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BookScreen(modifier: Modifier = Modifier, onUploadClick: () -> Unit) {
-    var search by rememberSaveable { mutableStateOf("") }
+fun BookScreen(
+    modifier: Modifier = Modifier,
+    bookViewModel: BookViewModel
+) {
+    val bookUiState by bookViewModel.uiState.collectAsState()
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,36 +70,27 @@ fun BookScreen(modifier: Modifier = Modifier, onUploadClick: () -> Unit) {
         )
 
         OutlinedTextField(
-            value = search,
-            onValueChange = {search = it},
+            value = bookUiState.search,
+            onValueChange = {bookViewModel.updateSearch(it)},
             label = {Text("Search")}
         )
 
         Button(
-            onClick = { onUploadClick()},
+            onClick = { bookViewModel.switchScreen("add")},
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Blue
             )
         ) {
             Text(text = "Upload")
         }
-    
-        val selectedFilter = books.filter {
-            search.isEmpty() ||
-            it.id.toString() == search ||
-            it.title.contains(search, ignoreCase = true) ||
-            it.author.contains(search, ignoreCase = true) ||
-            it.publishedDate.toString().contains(search)
-        }
 
-        bookList(selectedFilter)
+        bookList(bookUiState.books)
     }
 }
 
 @Composable
 fun bookCard(book: Book, modifier: Modifier = Modifier) {
-
-        Row(modifier = Modifier.fillMaxWidth(),
+    Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = painterResource(book.coverImageRes),
